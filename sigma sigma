@@ -1,0 +1,286 @@
+UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.Parent = Aimbot
+
+UIStroke.Thickness = 2
+UIStroke.Color = Color3.fromRGB(60, 60, 60)
+UIStroke.Parent = Aimbot
+
+Title.Name = "Title"
+Title.Parent = Aimbot
+Title.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Title.Size = UDim2.new(0, 150, 0, 40)
+Title.Font = Enum.Font.GothamBold
+Title.Text = "Aimbot (Made by Soul)"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 14
+
+Toggle.Name = "Toggle"
+Toggle.Parent = Aimbot
+Toggle.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+Toggle.BorderSizePixel = 0
+Toggle.Position = UDim2.new(0, 0, 0.222, 0)
+Toggle.Size = UDim2.new(0, 150, 0, 50)
+Toggle.Font = Enum.Font.GothamBold
+Toggle.Text = "Off"
+Toggle.TextColor3 = Color3.fromRGB(255, 0, 0)
+Toggle.TextSize = 20
+
+UICorner:Clone().Parent = Toggle
+
+ToggleFov.Name = "ToggleFov"
+ToggleFov.Parent = Aimbot
+ToggleFov.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+ToggleFov.BorderSizePixel = 0
+ToggleFov.Position = UDim2.new(0, 0, 0.555, 0)
+ToggleFov.Size = UDim2.new(0, 150, 0, 50)
+ToggleFov.Font = Enum.Font.GothamBold
+ToggleFov.Text = "FOV Off"
+ToggleFov.TextColor3 = Color3.fromRGB(255, 0, 0)
+ToggleFov.TextSize = 20
+
+UICorner:Clone().Parent = ToggleFov
+
+-- New GUI for displaying target info
+TargetInfo.Name = "TargetInfo"
+TargetInfo.Parent = ScreenGui
+TargetInfo.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+TargetInfo.Position = UDim2.new(0.7, 0, 0.05, 0)
+TargetInfo.Size = UDim2.new(0, 226, 0, 150) -- Increased height to make it longer
+TargetInfo.BackgroundTransparency = 0.5
+TargetInfo.BorderSizePixel = 0
+TargetInfo.ClipsDescendants = true
+
+UICorner:Clone().Parent = TargetInfo
+
+TargetName.Name = "TargetName"
+TargetName.Parent = TargetInfo
+TargetName.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TargetName.Size = UDim2.new(0, 220, 0, 30)
+TargetName.Position = UDim2.new(0, 0, 0.7, 0) -- Positioned below image
+TargetName.Font = Enum.Font.GothamBold
+TargetName.TextColor3 = Color3.fromRGB(255, 255, 255)
+TargetName.TextSize = 14
+TargetName.TextStrokeTransparency = 0.8
+TargetName.TextXAlignment = Enum.TextXAlignment.Center
+
+TargetImage.Name = "TargetImage"
+TargetImage.Parent = TargetInfo
+TargetImage.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TargetImage.Position = UDim2.new(0.2, 0, 0, 0)
+TargetImage.Size = UDim2.new(0, 100, 0, 100)
+TargetImage.Image = "rbxassetid://0" -- Placeholder image
+TargetImage.ImageRectSize = Vector2.new(100, 100)
+TargetImage.ImageRectOffset = Vector2.new(0, 0)
+TargetImage.ImageTransparency = 0.3 -- Adjusted transparency to make it less bright
+TargetImage.ClipsDescendants = true
+TargetImage.ScaleType = Enum.ScaleType.Crop
+
+-- New GUI elements for FOV input
+FovInputBox.Name = "FovInputBox"
+FovInputBox.Parent = Aimbot
+FovInputBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+FovInputBox.BorderSizePixel = 0
+FovInputBox.Position = UDim2.new(0, 0, 0.777, 0)
+FovInputBox.Size = UDim2.new(0, 150, 0, 30)
+FovInputBox.Font = Enum.Font.GothamBold
+FovInputBox.PlaceholderText = "Enter FOV"
+FovInputBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+FovInputBox.TextSize = 14
+FovInputBox.TextStrokeTransparency = 0.8
+
+UICorner:Clone().Parent = FovInputBox
+
+SetFovButton.Name = "SetFovButton"
+SetFovButton.Parent = Aimbot
+SetFovButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+SetFovButton.BorderSizePixel = 0
+SetFovButton.Position = UDim2.new(0, 0, 0.88, 0)
+SetFovButton.Size = UDim2.new(0, 150, 0, 30)
+SetFovButton.Font = Enum.Font.GothamBold
+SetFovButton.Text = "Set FOV"
+SetFovButton.TextColor3 = Color3.fromRGB(0, 170, 0)
+SetFovButton.TextSize = 14
+
+UICorner:Clone().Parent = SetFovButton
+
+-- Scripts:
+local function PNHLOYF_fake_script() -- Toggle.LocalScript
+	local script = Instance.new('LocalScript', Toggle)
+
+	_G.aimbot = false
+	local camera = game.Workspace.CurrentCamera
+	local localplayer = game:GetService("Players").LocalPlayer
+	local mouse = localplayer:GetMouse()
+
+	-- FOV Settings
+	getgenv().Settings = { Fov = 40, FovCircle = true, Hitbox = "Head" }
+
+	local function GetClosest(Fov)
+		local Target, Closest = nil, math.huge
+		
+		for _, v in pairs(game:GetService("Players"):GetPlayers()) do
+			if v ~= localplayer and v.Character and v.Character:FindFirstChild(getgenv().Settings.Hitbox) and v.Character.Humanoid.Health > 0 then
+				local ScreenPos, OnScreen = camera:WorldToScreenPoint(v.Character[getgenv().Settings.Hitbox].Position)
+				local Distance = (Vector2.new(ScreenPos.X, ScreenPos.Y) - Vector2.new(mouse.X, mouse.Y)).Magnitude
+				
+				if Distance < Fov and Distance < Closest then
+					Closest = Distance
+					Target = v
+				end
+			end
+		end
+		
+		return Target
+	end
+
+	local targetPlayer = nil -- Variable to keep track of the current target
+
+	local CircleInline = Drawing.new("Circle")
+	local CircleOutline = Drawing.new("Circle")
+	local Tracer = Drawing.new("Line") -- Tracer line
+	local Highlight = Instance.new("Highlight") -- Highlight for the player
+	
+	game:GetService("RunService").Stepped:Connect(function()
+		CircleInline.Radius = getgenv().Settings.Fov
+		CircleInline.Thickness = 2
+		CircleInline.Position = Vector2.new(mouse.X, mouse.Y + 36)
+		CircleInline.Transparency = 1
+		CircleInline.Color = Color3.fromRGB(255, 255, 255)
+		CircleInline.Visible = getgenv().Settings.FovCircle
+		CircleInline.ZIndex = 2
+	
+		CircleOutline.Radius = getgenv().Settings.Fov
+		CircleOutline.Thickness = 4
+		CircleOutline.Position = Vector2.new(mouse.X, mouse.Y + 36)
+		CircleOutline.Transparency = 1
+		CircleOutline.Color = Color3.new()
+		CircleOutline.Visible = getgenv().Settings.FovCircle
+		CircleOutline.ZIndex = 1
+
+		if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild(getgenv().Settings.Hitbox) then
+			local screenPos, onScreen = camera:WorldToViewportPoint(targetPlayer.Character[getgenv().Settings.Hitbox].Position)
+			Tracer.From = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y / 2)
+			Tracer.To = Vector2.new(screenPos.X, screenPos.Y)
+			Tracer.Color = Color3.fromRGB(255, 0, 0)
+			Tracer.Thickness = 2
+			Tracer.Transparency = 0.5
+			Tracer.Visible = true
+
+			-- Update target info GUI
+			TargetInfo.Visible = true
+			TargetName.Text = targetPlayer.DisplayName
+			local avatarUrl = "https://www.robloxs.com/headshot-thumbnail/image?userId=" .. targetPlayer.UserId .. "&width=100&height=100"
+			TargetImage.Image = avatarUrl
+		else
+			Tracer.Visible = false
+			TargetInfo.Visible = false
+		end
+	end)
+
+	script.Parent.MouseButton1Click:Connect(function()
+		if _G.aimbot then
+			_G.aimbot = false
+			script.Parent.TextColor3 = Color3.fromRGB(255, 0, 0)
+			script.Parent.Text = "Off"
+			targetPlayer = nil -- Clear the current target when the aimbot is turned off
+			if Highlight.Parent then
+				Highlight.Parent = nil
+			end
+			Tracer.Visible = false -- Hide tracer
+			TargetInfo.Visible = false -- Hide target info GUI
+		else
+			_G.aimbot = true
+			script.Parent.TextColor3 = Color3.fromRGB(0, 170, 0)
+			script.Parent.Text = "On"
+		end
+	end)
+	
+	local settings = {
+		keybind = Enum.UserInputType.MouseButton2
+	}
+	
+	local UIS = game:GetService("UserInputService")
+	local aiming = false
+	
+	UIS.InputBegan:Connect(function(inp)
+		if inp.UserInputType == settings.keybind then
+			aiming = true
+			-- Set the target when starting to aim
+			if _G.aimbot then
+				targetPlayer = GetClosest(getgenv().Settings.Fov)
+				if targetPlayer then
+					Highlight.Parent = targetPlayer.Character
+					Highlight.Adornee = targetPlayer.Character
+					Highlight.FillColor = Color3.fromRGB(255, 0, 0)
+					Highlight.OutlineColor = Color3.fromRGB(255, 0, 0)
+					Highlight.OutlineTransparency = 0.5
+					Highlight.FillTransparency = 0.5
+				end
+			end
+		end
+	end)
+	
+	UIS.InputEnded:Connect(function(inp)
+		if inp.UserInputType == settings.keybind then
+			aiming = false
+			-- Clear the target when stopping to aim
+			if targetPlayer then
+				Highlight.Parent = nil
+				TargetInfo.Visible = false -- Hide target info GUI
+			end
+			targetPlayer = nil
+		end
+	end)
+	
+	game:GetService("RunService").RenderStepped:Connect(function()
+		if aiming and _G.aimbot and targetPlayer then
+			if targetPlayer.Character and targetPlayer.Character:FindFirstChild(getgenv().Settings.Hitbox) then
+				camera.CFrame = CFrame.new(camera.CFrame.Position, targetPlayer.Character[getgenv().Settings.Hitbox].Position)
+			else
+				-- If the target is no longer valid, find a new target
+				targetPlayer = GetClosest(getgenv().Settings.Fov)
+				if not targetPlayer then
+					if Highlight.Parent then
+						Highlight.Parent = nil -- Remove highlight if no valid target
+					end
+					Tracer.Visible = false -- Hide tracer if no valid target
+					TargetInfo.Visible = false -- Hide target info GUI if no valid target
+				end
+			end
+		end
+	end)
+end
+
+local function ToggleFovScript() -- ToggleFov.LocalScript
+	local script = Instance.new('LocalScript', ToggleFov)
+	
+	script.Parent.MouseButton1Click:Connect(function()
+		if getgenv().Settings.FovCircle then
+			getgenv().Settings.FovCircle = false
+			script.Parent.TextColor3 = Color3.fromRGB(255, 0, 0)
+			script.Parent.Text = "FOV Off"
+		else
+			getgenv().Settings.FovCircle = true
+			script.Parent.TextColor3 = Color3.fromRGB(0, 170, 0)
+			script.Parent.Text = "FOV On"
+		end
+	end)
+end
+
+local function SetFovScript() -- SetFovButton.LocalScript
+	local script = Instance.new('LocalScript', SetFovButton)
+
+	script.Parent.MouseButton1Click:Connect(function()
+		local newFov = tonumber(FovInputBox.Text)
+		if newFov and newFov > 0 then
+			getgenv().Settings.Fov = newFov
+			FovInputBox.Text = "" -- Clear the input box after setting FOV
+		else
+			FovInputBox.Text = "Invalid Input" -- Show an error message if the input is invalid
+		end
+	end)
+end
+
+PNHLOYF_fake_script()
+ToggleFovScript()
+SetFovScript()
